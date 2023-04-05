@@ -26,6 +26,7 @@ public:
 	// End UTexture interface
 
 	UHololensCameraSensor* GetSensor() const { return Sensor; }
+
 protected:
 	friend class UHololensCameraSensor;
 

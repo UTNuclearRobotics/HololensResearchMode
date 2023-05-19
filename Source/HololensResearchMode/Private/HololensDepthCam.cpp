@@ -106,6 +106,12 @@ void UHololensDepthCam::SensorLoop()
 
 	uint32 RowPitch = VideoTextureGenerator->GetRowPitch();
 
+	// Save image data for getter function
+	Height = SensorHeight;
+	Width = SensorWidth;
+	SensorSize = SensorHeight * SensorWidth;          // Initialize Sensor Size
+	StoredImageArray.SetNumUninitialized(SensorSize); // Initialize Image Array
+
 
 	if (Type == EHololensSensorType::DEPTH_LONG_THROW)
 	{
@@ -167,6 +173,7 @@ void UHololensDepthCam::SensorLoop()
 
 				pixel = inputPixel | (inputPixel << 8) | (inputPixel << 16);
 				mappedTexture[(RowPitch / 4) * i + j] = pixel;
+				StoredImageArray[SensorWidth * i + j] = inputPixel;
 			}
 		}
 	}
@@ -181,5 +188,19 @@ void UHololensDepthCam::CalcTextureResolution(int32& InOutWidth, int32& InOutHei
 	{
 		InOutWidth *= 2;
 	}
+}
+
+// AugRE Add. Blueprint function.
+bool UHololensDepthCam::GetDepthCamData(TArray<uint8>& OutData, int32& OutHeight, int32& OutWidth)
+{
+#if PLATFORM_HOLOLENS
+	OutHeight = Height;
+	OutWidth = Width;
+	OutData = StoredImageArray;
+	return true;
+#endif
+
+	UE_LOG(LogHLResearch, Error, TEXT("[Target not PLATFORM_HOLOLENS] Cannot Get VLC Cam Data"));
+	return false;
 }
 

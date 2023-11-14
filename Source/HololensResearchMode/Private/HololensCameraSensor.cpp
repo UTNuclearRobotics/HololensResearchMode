@@ -4,8 +4,13 @@
 #include "HololensCameraSensor.h"
 #include "VideoTextureResource.h"
 #include "VideoTextureGenerator.h"
+#include "Math/UnrealMathUtility.h"
+#include <algorithm>
+#include "TextureResource.h"
+#include "Rendering/StreamableTextureResource.h"
+#include "RHI.h"
+#include "Containers/Array.h"
 #include "Async/Async.h"
-
 
 
 UHololensResearchModeVideoTexture::UHololensResearchModeVideoTexture(const FObjectInitializer& ObjectInitializer)

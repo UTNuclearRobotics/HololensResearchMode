@@ -106,13 +106,6 @@ void UHololensDepthCam::SensorLoop()
 
 	uint32 RowPitch = VideoTextureGenerator->GetRowPitch();
 
-	// Save image data for getter function
-	Height = SensorHeight;
-	Width = SensorWidth;
-	SensorSize = SensorHeight * SensorWidth;          // Initialize Sensor Size
-	StoredDepthImageShortArray.SetNumUninitialized(SensorSize); // Initialize Image Array
-	StoredDepthImageLongArray.SetNumUninitialized(SensorSize);
-
 
 	if (Type == EHololensSensorType::DEPTH_LONG_THROW)
 	{
@@ -133,9 +126,8 @@ void UHololensDepthCam::SensorLoop()
 						0,
 						maxClampDepth);
 
-					//pixel = inputPixel | (inputPixel << 8) | (inputPixel << 16);
-					//mappedTexture[(RowPitch / 4) * i + j] = pixel;
-					StoredDepthImageLongArray[SensorWidth * i + j] = inputPixel;
+					pixel = inputPixel | (inputPixel << 8) | (inputPixel << 16);
+					mappedTexture[(RowPitch / 4) * i + j] = pixel;
 				}
 
 				{
@@ -148,9 +140,8 @@ void UHololensDepthCam::SensorLoop()
 						0,
 						maxClampDepth);
 
-					//pixel = inputPixel | (inputPixel << 8) | (inputPixel << 16);
-					//mappedTexture[(RowPitch / 4) * i + SensorWidth / 2 + j] = pixel;
-					StoredDepthImageLongArray[SensorWidth * i + SensorWidth / 2 + j] = inputPixel;
+					pixel = inputPixel | (inputPixel << 8) | (inputPixel << 16);
+					mappedTexture[(RowPitch / 4) * i + SensorWidth / 2 + j] = pixel;
 				}
 			}
 		}
@@ -174,9 +165,8 @@ void UHololensDepthCam::SensorLoop()
 					0,
 					maxClampDepth);
 
-				//pixel = inputPixel | (inputPixel << 8) | (inputPixel << 16);
-				//mappedTexture[(RowPitch / 4) * i + j] = pixel;
-				StoredDepthImageShortArray[SensorWidth * i + j] = inputPixel;
+				pixel = inputPixel | (inputPixel << 8) | (inputPixel << 16);
+				mappedTexture[(RowPitch / 4) * i + j] = pixel;
 			}
 		}
 	}
@@ -191,32 +181,5 @@ void UHololensDepthCam::CalcTextureResolution(int32& InOutWidth, int32& InOutHei
 	{
 		InOutWidth *= 2;
 	}
-}
-
-// AugRE Add. Blueprint function.
-bool UHololensDepthCam::GetDepthCamShortThrowData(TArray<uint8>& OutData, int32& OutHeight, int32& OutWidth)
-{
-#if PLATFORM_HOLOLENS
-	OutHeight = Height;
-	OutWidth = Width;
-	OutData = StoredDepthImageShortArray;
-	return true;
-#endif
-
-	UE_LOG(LogHLResearch, Error, TEXT("[Target not PLATFORM_HOLOLENS] Cannot Get Short Depth Cam Data"));
-	return false;
-}
-
-bool UHololensDepthCam::GetDepthCamLongThrowData(TArray<uint8>& OutData, int32& OutHeight, int32& OutWidth)
-{
-#if PLATFORM_HOLOLENS
-	OutHeight = Height;
-	OutWidth = Width;
-	OutData = StoredDepthImageLongArray;
-	return true;
-#endif
-
-	UE_LOG(LogHLResearch, Error, TEXT("[Target not PLATFORM_HOLOLENS] Cannot Get Long Depth Cam Data"));
-	return false;
 }
 

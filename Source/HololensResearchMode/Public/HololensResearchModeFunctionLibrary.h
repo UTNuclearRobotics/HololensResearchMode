@@ -7,12 +7,9 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "HololensSensor.h"
-#include "Engine/Texture2D.h"
-#include "Templates/SharedPointer.h"
+
 
 #include "HololensResearchModeFunctionLibrary.Generated.h"
-
-
 
 
 UCLASS(BlueprintType, Category = "HololensResearchMode")
@@ -30,8 +27,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "HololensResearchMode")
 	static TArray<EHololensSensorType> GetAllAvailableSensors();
-
-	UFUNCTION(BlueprintCallable, Category = "HololensResearchMode")
-	static void GetCameraSensorTextureData(UTexture2D* CameraSensorTexture, TArray<uint8>& uncompressedBGRA);
+	 
+	static void UpdateLatestWristTransforms(bool bNewLeftHandstate, bool bNewRightHandstate, FTransform& LeftWristTransform, FTransform& RightWristTransform, FVector HeadsetPosition, FQuat HeadsetOrientation, FTransform TrackingToWorldTransform);
 };
 

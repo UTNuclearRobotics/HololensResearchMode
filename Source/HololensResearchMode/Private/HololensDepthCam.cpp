@@ -133,9 +133,9 @@ void UHololensDepthCam::SensorLoop()
 						0,
 						maxClampDepth);
 
-					pixel = inputPixel | (inputPixel << 8) | (inputPixel << 16);
-					mappedTexture[(RowPitch / 4) * i + j] = pixel;
-					StoredDepthImageLongArray[SensorWidth * i + j] = pixel;
+					//pixel = inputPixel | (inputPixel << 8) | (inputPixel << 16);
+					//mappedTexture[(RowPitch / 4) * i + j] = pixel;
+					StoredDepthImageLongArray[SensorWidth * i + j] = inputPixel;
 				}
 
 				{
@@ -148,9 +148,9 @@ void UHololensDepthCam::SensorLoop()
 						0,
 						maxClampDepth);
 
-					pixel = inputPixel | (inputPixel << 8) | (inputPixel << 16);
-					mappedTexture[(RowPitch / 4) * i + SensorWidth / 2 + j] = pixel;
-					StoredDepthImageLongArray[SensorWidth * i + SensorWidth / 2 + j] = pixel;
+					//pixel = inputPixel | (inputPixel << 8) | (inputPixel << 16);
+					//mappedTexture[(RowPitch / 4) * i + SensorWidth / 2 + j] = pixel;
+					StoredDepthImageLongArray[SensorWidth * i + SensorWidth / 2 + j] = inputPixel;
 				}
 			}
 		}
@@ -174,8 +174,8 @@ void UHololensDepthCam::SensorLoop()
 					0,
 					maxClampDepth);
 
-				pixel = inputPixel | (inputPixel << 8) | (inputPixel << 16);
-				mappedTexture[(RowPitch / 4) * i + j] = pixel;
+				//pixel = inputPixel | (inputPixel << 8) | (inputPixel << 16);
+				//mappedTexture[(RowPitch / 4) * i + j] = pixel;
 				StoredDepthImageShortArray[SensorWidth * i + j] = inputPixel;
 			}
 		}

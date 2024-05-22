@@ -11,7 +11,6 @@
 #include "Templates/SharedPointer.h"
 #include "Engine/Texture.h"
 
-
 UHololensResearchModeFunctionLibrary::UHololensResearchModeFunctionLibrary(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -99,68 +98,65 @@ TArray<EHololensSensorType> UHololensResearchModeFunctionLibrary::GetAllAvailabl
 	return Result;
 }
 
+void UHololensResearchModeFunctionLibrary::UpdateLatestWristTransforms(bool bNewLeftHandstate, bool bNewRightHandstate, FTransform& LeftWristTransform, FTransform& RightWristTransform, FVector HeadsetPosition, FQuat HeadsetOrientation, FTransform TrackingToWorldTransform)
+{
+#if PLATFORM_HOLOLENS
+	FHololensResearchModeModule::Get()->UpdateLatestWristTransformsFromHandTracker(bNewLeftHandstate, bNewRightHandstate, LeftWristTransform, RightWristTransform, HeadsetPosition, HeadsetOrientation, TrackingToWorldTransform);
+#endif
+}
+
 // Resource: https://isaratech.com/ue4-reading-the-pixels-from-a-utexture2d/
 void UHololensResearchModeFunctionLibrary::GetCameraSensorTextureData(UTexture2D* CameraSensorTexture, TArray<uint8>& uncompressedBGRA)
-{
-//#if WITH_EDITORONLY_DATA
-//	TextureMipGenSettings OldMipGenSettings = CameraSensorTexture->MipGenSettings;
-//	CameraSensorTexture->MipGenSettings = TextureMipGenSettings::TMGS_NoMipmaps;
-//#endif
+{	
+	//#if WITH_EDITORONLY_DATA
+	//	TextureMipGenSettings OldMipGenSettings = CameraSensorTexture->MipGenSettings;
+	//	CameraSensorTexture->MipGenSettings = TextureMipGenSettings::TMGS_NoMipmaps;
+	//#endif
+		// Update Settings
+		//TextureCompressionSettings OldCompressionSettings = CameraSensorTexture->CompressionSettings; 
+		//bool OldSRGB = CameraSensorTexture->SRGB;
+		//CameraSensorTexture->CompressionSettings = TextureCompressionSettings::TC_VectorDisplacementmap;
+		//CameraSensorTexture->SRGB = false;
+		//CameraSensorTexture->UpdateResource();
+		//const FColor* FormatedImageData = reinterpret_cast<const FColor*>(CameraSensorTexture->PlatformData->Mips[0].BulkData.LockReadOnly());
 
-	// Update Settings
-	//TextureCompressionSettings OldCompressionSettings = CameraSensorTexture->CompressionSettings; 
-	//bool OldSRGB = CameraSensorTexture->SRGB;
-	//CameraSensorTexture->CompressionSettings = TextureCompressionSettings::TC_VectorDisplacementmap;
-	//CameraSensorTexture->SRGB = false;
-	//CameraSensorTexture->UpdateResource();
+		FTexture2DMipMap* TileMipMap = &CameraSensorTexture->PlatformData->Mips[0];
+		FByteBulkData* RawImageData = &TileMipMap->BulkData;
+		//const FColor* FormatedImageData = reinterpret_cast<FColor*>(RawImageData->Lock(LOCK_READ_ONLY));
+		uint8* FormatedImageData = (uint8*)(RawImageData->Lock(LOCK_READ_ONLY));
+		uint32 TextureWidth = TileMipMap->SizeX, TextureHeight = TileMipMap->SizeY;
+		//FColor* PixelColor = nullptr;
+		int BitDepth = 4;
+		int TextureResolution = TextureWidth * TextureHeight * BitDepth;
+		//TSharedPtr<TArray<uint8>> uncompressedBGRA = MakeShared<TArray<uint8>>();
+		uncompressedBGRA.SetNum(TextureResolution);
+		//std::memcpy(uncompressedBGRA.GetData(), FormatedImageData, sizeof(FormatedImageData));
 
-	//const FColor* FormatedImageData = reinterpret_cast<const FColor*>(CameraSensorTexture->PlatformData->Mips[0].BulkData.LockReadOnly());
+		//for (uint32 X = 0; X < TextureWidth; X++)
+		//{
+		//	for (uint32 Y = 0; Y < TextureHeight; Y++)
+		//	{
+		//		*PixelColor = FormatedImageData[Y * TextureWidth + X];
+		//		UE_LOG(LogHLResearch, Error, TEXT("RGBA: %s"), *PixelColor->ToString());
+		//}
 	
-	FTexture2DMipMap* TileMipMap = &CameraSensorTexture->PlatformData->Mips[0];
-	FByteBulkData* RawImageData = &TileMipMap->BulkData;
-	//const FColor* FormatedImageData = reinterpret_cast<FColor*>(RawImageData->Lock(LOCK_READ_ONLY));
-	uint8* FormatedImageData = (uint8*)(RawImageData->Lock(LOCK_READ_ONLY));
-	uint32 TextureWidth = TileMipMap->SizeX, TextureHeight = TileMipMap->SizeY;
-	//FColor* PixelColor = nullptr;
-	int BitDepth = 4;
-	int TextureResolution = TextureWidth * TextureHeight * BitDepth;
-	//TSharedPtr<TArray<uint8>> uncompressedBGRA = MakeShared<TArray<uint8>>();
-	uncompressedBGRA.SetNum(TextureResolution);
-	//std::memcpy(uncompressedBGRA.GetData(), FormatedImageData, sizeof(FormatedImageData));
-	
-
-
-	//for (uint32 X = 0; X < TextureWidth; X++)
-	//{
-	//	for (uint32 Y = 0; Y < TextureHeight; Y++)
-	//	{
-	//		*PixelColor = FormatedImageData[Y * TextureWidth + X];
-	//		UE_LOG(LogHLResearch, Error, TEXT("RGBA: %s"), *PixelColor->ToString());
-	//	}
-	//}
-	
-
 	for (auto i = 0; i < TextureResolution; i++)
 	{
 		//UE_LOG(LogHLResearch, Error, TEXT("uint8: %d"), FormatedImageData[i]);
 		uncompressedBGRA[i] = FormatedImageData[i];
 	}
-
 	RawImageData->Unlock();
-	//UE_LOG(LogHLResearch, Error, TEXT("Recorded Sensor Data"));
-
-	// Update Settings
-
-//#if WITH_EDITORONLY_DATA
-//	CameraSensorTexture->MipGenSettings = OldMipGenSettings;
-//#endif
-//
-//	CameraSensorTexture->CompressionSettings = OldCompressionSettings;
-//	CameraSensorTexture->SRGB = OldSRGB;
-//	CameraSensorTexture->UpdateResource();
-
 	
-
+	//UE_LOG(LogHLResearch, Error, TEXT("Recorded Sensor Data"));
+	// Update Settings
+	//#if WITH_EDITORONLY_DATA
+	//	CameraSensorTexture->MipGenSettings = OldMipGenSettings;
+	//#endif
+	//
+	//	CameraSensorTexture->CompressionSettings = OldCompressionSettings;
+	//	CameraSensorTexture->SRGB = OldSRGB;
+	//	CameraSensorTexture->UpdateResource();
+	
 	/* THIS WORKS */
 	//FTexture2DMipMap* TileMipMap = &CameraSensorTexture->PlatformData->Mips[0];
 	//FByteBulkData* RawImageData = &TileMipMap->BulkData;
@@ -179,5 +175,3 @@ void UHololensResearchModeFunctionLibrary::GetCameraSensorTextureData(UTexture2D
 	//RawImageData->Unlock();
 	/* THIS WORKS END */
 }
-
-

@@ -113,7 +113,6 @@ void UHololensDepthCam::SensorLoop()
 	StoredDepthImageShortArray.SetNumUninitialized(SensorSize); // Initialize Image Array
 	StoredDepthImageLongArray.SetNumUninitialized(SensorSize);
 
-
 	if (Type == EHololensSensorType::DEPTH_LONG_THROW)
 	{
 		USHORT mask = 0x80;
@@ -219,4 +218,3 @@ bool UHololensDepthCam::GetDepthCamLongThrowData(TArray<uint8>& OutData, int32& 
 	UE_LOG(LogHLResearch, Error, TEXT("[Target not PLATFORM_HOLOLENS] Cannot Get Long Depth Cam Data"));
 	return false;
 }
-

@@ -4,6 +4,7 @@
 #pragma once
 
 #include "HololensCameraSensor.h"
+
 #include "HololensVLCCam.generated.h"
 
 class FVideoTextureResource;
@@ -29,6 +30,7 @@ protected:
 	uint32 SensorSize{ 0 }; // size of sensor being read
 	uint32 Height{ 0 };
 	uint32 Width{ 0 };
+
 	uint32 Gain = 0;
 	uint64 Exposure = 0;
 };

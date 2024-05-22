@@ -13,6 +13,7 @@ class HOLOLENSRESEARCHMODE_API UHololensDepthCam : public UHololensCameraSensor
 {
 	GENERATED_UCLASS_BODY()
 public:
+
 	UFUNCTION(BlueprintCallable, Category = "HololensResearchMode")
 	bool GetDepthCamShortThrowData(TArray<uint8>& OutData, int32& OutHeight, int32& OutWidth);
 

@@ -26,7 +26,6 @@ public:
 	// End UTexture interface
 
 	UHololensCameraSensor* GetSensor() const { return Sensor; }
-
 protected:
 	friend class UHololensCameraSensor;
 
@@ -50,6 +49,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "HololensResearchMode")
 	bool GetHololensSensorResolution(int32& OutSensorWidth, int32& OutSensorHeight);
+
+	void StartCapturing() override;
 
 	void NotifyCameraSensorTextureCreated();
 
